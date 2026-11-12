@@ -18,16 +18,17 @@ def check_availability(item_id: str, required_qty: int) -> bool:
     return available >= required_qty
 
 
-def reserve_stock(item_id: str, quantity: int, reserved_list: list = []) -> list:
+def reserve_stock(item_id: str, quantity: int, reserved_list: list = None) -> list:
     """
     Appends an item reservation to the reservation batch.
-
-    PLANTED BUG 3:
-    Python default argument trap: 'reserved_list: list = []' is evaluated once at
-    function definition time. Subsequent calls reusing the default argument mutate
-    the same list, leaking items across distinct customer orders.
-    Correct fix: if reserved_list is None: reserved_list = []
+    
+    Fixes the mutable default argument bug by using None as the default
+    and initializing a new list inside the function if needed.
     """
+    # Create a new list if none was provided
+    if reserved_list is None:
+        reserved_list = []
+
     if quantity <= 0:
         return reserved_list
 
